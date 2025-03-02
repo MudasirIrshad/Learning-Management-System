@@ -1,14 +1,16 @@
 "use client";
+
+import { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+
 interface SidebarItemProps {
   icon: LucideIcon;
   label: string;
   href: string;
 }
-import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import React from "react";
+
 export default function SidebarItem({
   icon: Icon,
   label,
@@ -25,13 +27,14 @@ export default function SidebarItem({
   const onClick = () => {
     router.push(href);
   };
+
   return (
-    <div>
+    <div className="w-full">
       <button
         onClick={onClick}
         type="button"
         className={cn(
-          "flex items-center gap-x-2 w-full text-slate-500 text-sm font-[500] pl-6 transition-all hover:text-slate-600 hover:bg-slate-300/20",
+          "relative flex items-center gap-x-2 w-full text-slate-500 text-sm font-[500] pl-6 transition-all hover:text-slate-600 hover:bg-slate-300/20 h-12",
           isActive &&
             "text-sky-700 bg-sky-200/20 hover:bg-sky-200/20 hover:text-sky-700"
         )}
@@ -43,6 +46,14 @@ export default function SidebarItem({
           />
           {label}
         </div>
+
+        {/* Active State Border Indicator */}
+        <div
+          className={cn(
+            "ml-auto opacity-0 border-r-4 border-sky-700 absolute inset-y-0 right-0 transition-all",
+            isActive && "opacity-100"
+          )}
+        />
       </button>
     </div>
   );
