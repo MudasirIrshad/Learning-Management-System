@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -29,10 +30,13 @@ function CreateCourse() {
       title: "",
     },
   });
-
+  const router = useRouter();
   const { isSubmitting, isValid } = form.formState;
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      const response = await axios.post("/api/courses", values);
+      router.push(`/teacher/courses/${response.data.id}`);
+      toast.success("Course created successfully");
     } catch (error: any) {
       toast.error(error);
     }
