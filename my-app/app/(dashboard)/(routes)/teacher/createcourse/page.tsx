@@ -33,9 +33,8 @@ function CreateCourse() {
   const { isSubmitting, isValid } = form.formState;
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     try {
-      toast.success(values.title);
-    } catch (error) {
-      //   toast.error(error.message);
+    } catch (error: any) {
+      toast.error(error);
     }
   };
   return (
