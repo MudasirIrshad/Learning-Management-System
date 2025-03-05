@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -15,6 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PencilIcon } from "lucide-react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface TitleFormProps {
   initialData: {
@@ -28,6 +31,7 @@ const formSchema = z.object({
   }),
 });
 function TitleForm({ initialData, courseId }: TitleFormProps) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
@@ -38,10 +42,14 @@ function TitleForm({ initialData, courseId }: TitleFormProps) {
   };
   const { isSubmitting, isValid } = form.formState;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("[TITLE FORM]", values);
-
     try {
-    } catch (error) {}
+      await axios.patch(`/api/courses/${courseId}`, values);
+      toast.success("Course title updated successfully");
+      toggleEdit();
+      router.refresh();
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
