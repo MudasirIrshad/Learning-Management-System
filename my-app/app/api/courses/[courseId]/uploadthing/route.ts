@@ -8,5 +8,6 @@ const handlers = createRouteHandler({
   config: {
     token: process.env.UPLOADTHING_TOKEN,
   },
+  
 });
 export { handlers as GET, handlers as POST };
