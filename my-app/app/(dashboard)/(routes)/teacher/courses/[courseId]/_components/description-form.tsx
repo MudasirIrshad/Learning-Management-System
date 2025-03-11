@@ -35,7 +35,7 @@ function DescriptionForm({ initialData, courseId }: DescriptionFormProps) {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: { description: initialData.description || "" },
   });
   const [isEditing, setIsEditing] = useState(false);
   const toggleEdit = () => {
@@ -92,7 +92,8 @@ function DescriptionForm({ initialData, courseId }: DescriptionFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea className="rounded-sm border-black border-2 bg-white"
+                    <Textarea
+                      className="rounded-sm border-black border-2 bg-white"
                       disabled={isSubmitting}
                       placeholder="e.g. 'This is course about...'"
                       {...field}

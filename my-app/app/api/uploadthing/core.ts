@@ -13,13 +13,13 @@ const handleauth = async () => {
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   courseImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
-    .middleware(() => handleauth())
+    .middleware(async () => await handleauth())
     .onUploadComplete(() => {}),
   courseAttachment: f(["text", "image", "video", "audio", "pdf"])
-    .middleware(() => handleauth())
+    .middleware(async () => await handleauth())
     .onUploadComplete(() => {}),
   chapterVideo: f({ video: { maxFileSize: "512GB", maxFileCount: 1 } })
-    .middleware(() => handleauth())
+    .middleware(async () => await handleauth())
     .onUploadComplete(() => {}),
 } satisfies FileRouter;
 
