@@ -1,4 +1,4 @@
-import { createUploadthing, type FileRouter } from "uploadthing/server";
+import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { auth } from "@clerk/nextjs/server";
 const f = createUploadthing();
 
