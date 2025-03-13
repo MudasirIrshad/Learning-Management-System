@@ -22,6 +22,11 @@ async function CourseIdPage({
       id: params.courseId,
     },
   });
+  const categories = await prisma.category.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
   if (!course) return redirect("/");
 
   const requiredFields = [
@@ -54,6 +59,7 @@ async function CourseIdPage({
           {/* Course Details */}
           <TitleForm initialData={course} courseId={course.id} />
           <DescriptionForm initialData={course} courseId={course.id} />
+          <ImageForm initialData={course} courseId={course.id} />
           <ImageForm initialData={course} courseId={course.id} />
         </div>
       </div>
