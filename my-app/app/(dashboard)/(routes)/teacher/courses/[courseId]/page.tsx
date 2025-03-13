@@ -1,12 +1,19 @@
 import { IconBadge } from "@/components/icon-badge";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { LayoutDashboard } from "lucide-react";
+import {
+  CircleDollarSign,
+  File,
+  LayoutDashboard,
+  ListCheck,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
+import CategoryForm from "./_components/category-form";
+import PriceForm from "./_components/price-form";
 
 async function CourseIdPage({
   params,
@@ -27,6 +34,7 @@ async function CourseIdPage({
       name: "asc",
     },
   });
+
   if (!course) return redirect("/");
 
   const requiredFields = [
@@ -60,7 +68,32 @@ async function CourseIdPage({
           <TitleForm initialData={course} courseId={course.id} />
           <DescriptionForm initialData={course} courseId={course.id} />
           <ImageForm initialData={course} courseId={course.id} />
-          <ImageForm initialData={course} courseId={course.id} />
+          <CategoryForm
+            initialData={course}
+            courseId={course.id}
+            options={categories.map((cat) => ({
+              label: cat.name,
+              value: cat.id,
+            }))}
+          />
+        </div>
+        <div className="space-y-6">
+          <div>
+            <div className="flex items-center gap-x-2">
+              <IconBadge icon={ListCheck} />
+              <h2>Course Chapters</h2>
+            </div>
+            <div>Todo Chapters</div>
+          </div>
+          <div className="flex items-center gap-x-2">
+            <IconBadge icon={CircleDollarSign} />
+            <h2>Sell your course</h2>
+          </div>
+          <PriceForm initialData={course} courseId={course.id} />
+          <div className="flex items-center gap-x-2">
+            <IconBadge icon={File} />
+            <h2>Resources & Attachments</h2>
+          </div>
         </div>
       </div>
     </div>
