@@ -14,6 +14,7 @@ import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
+import AttachmentForm from "./_components/attachment-form";
 
 async function CourseIdPage({
   params,
@@ -27,6 +28,13 @@ async function CourseIdPage({
   const course = await prisma.course.findUnique({
     where: {
       id: params.courseId,
+    },
+    include: {
+      attachments: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   });
   const categories = await prisma.category.findMany({
@@ -94,6 +102,7 @@ async function CourseIdPage({
             <IconBadge icon={File} />
             <h2>Resources & Attachments</h2>
           </div>
+          <AttachmentForm initialData={course} courseId={course.id} />
         </div>
       </div>
     </div>

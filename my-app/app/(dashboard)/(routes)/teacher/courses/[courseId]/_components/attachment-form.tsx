@@ -6,20 +6,17 @@ import { Button } from "@/components/ui/button";
 import { ImageIcon, PencilIcon, PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Course } from "@prisma/client";
-import Image from "next/image";
+import { Attachment, Course } from "@prisma/client";
 import { FileUpload } from "@/components/file-upload";
 
-interface DescriptionFormProps {
-  initialData: Course;
+interface AttachmentFormProps {
+  initialData: Course & { attahments: Attachment[] };
   courseId: string;
 }
 const formSchema = z.object({
-  imageUrl: z.string().min(1, {
-    message: "Image Url is required",
-  }),
+  attachmentUrl: z.string().min(1),
 });
-function ImageForm({ initialData, courseId }: DescriptionFormProps) {
+function AttachmentForm({ initialData, courseId }: AttachmentFormProps) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const toggleEdit = () => {
@@ -27,8 +24,8 @@ function ImageForm({ initialData, courseId }: DescriptionFormProps) {
   };
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.patch(`/api/courses/${courseId}`, values);
-      toast.success("Course image updated successfully");
+      await axios.post(`/api/courses/${courseId}/attachments`, values);
+      toast.success("Course Attachment updated successfully");
       toggleEdit();
       router.refresh();
     } catch (error) {
@@ -38,54 +35,42 @@ function ImageForm({ initialData, courseId }: DescriptionFormProps) {
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course Image
+        Course Attachment
         <Button onClick={toggleEdit} variant={"ghost"}>
           {isEditing && <>Cancle</>}
-          {!isEditing && !initialData.imageUrl && (
+          {!isEditing && (
             <>
               <PlusCircle className="h-4 w-4" />
-              Add Image
+              Add a file
             </>
           )}
-          {!isEditing && initialData.imageUrl && (
+          {isEditing && initialData.attahments && (
             <>
               <PencilIcon className="h-4 w-4" />
-              Edit Image
+              Edit file
             </>
           )}
         </Button>
       </div>
-      {!isEditing &&
-        (!initialData.imageUrl ? (
-          <>
-            <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
-              <ImageIcon className="h-10 w-10 text-slate-500" />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="relative aspect-video mt-2">
-              <Image
-                alt="Upload"
-                fill
-                className="object-cover rounded-md"
-                src={initialData.imageUrl}
-              />
-            </div>
-          </>
-        ))}
+      {!isEditing && (
+        <>
+          {initialData.attahments && (
+            <p className="text-sm mt-2 text-slate-500 italic">No attachments</p>
+          )}
+        </>
+      )}
       {isEditing && (
         <div>
           <FileUpload
-            endpoint="courseImage"
+            endpoint="courseAttachment"
             onChange={(url) => {
               if (url) {
-                onSubmit({ imageUrl: url });
+                onSubmit({ url });
               }
             }}
           />
           <div className="text-xs text-muted-foreground mt-4">
-            16:9 aspect ratio recommended
+            Add anything your student might need to complete the course
           </div>
         </div>
       )}
@@ -93,4 +78,4 @@ function ImageForm({ initialData, courseId }: DescriptionFormProps) {
   );
 }
 
-export default ImageForm;
+export default AttachmentForm;
