@@ -15,6 +15,7 @@ import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
+import ChapterForm from "./_components/chapter-form";
 
 async function CourseIdPage({
   params,
@@ -28,11 +29,17 @@ async function CourseIdPage({
   const course = await prisma.course.findUnique({
     where: {
       id: params.courseId,
+      userId,
     },
     include: {
       attachments: {
         orderBy: {
           createdAt: "desc",
+        },
+      },
+      chapters: {
+        orderBy: {
+          position: "asc",
         },
       },
     },
@@ -51,6 +58,7 @@ async function CourseIdPage({
     course.categoryId,
     course.imageUrl,
     course.price,
+    course.chapters.some((chapter) => chapter.isPublished),
   ];
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
@@ -91,7 +99,7 @@ async function CourseIdPage({
               <IconBadge icon={ListCheck} />
               <h2>Course Chapters</h2>
             </div>
-            <div>Todo Chapters</div>
+            <ChapterForm initialData={course} courseId={course.id} />
           </div>
           <div className="flex items-center gap-x-2">
             <IconBadge icon={CircleDollarSign} />
