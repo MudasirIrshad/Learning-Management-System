@@ -1,12 +1,13 @@
 import { IconBadge } from "@/components/icon-badge";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { ArrowLeft, LayoutDashboard } from "lucide-react";
+import { ArrowLeft, Eye, EyeIcon, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import ChapterTitleForm from "./_components/chapter-title-form";
 import ChapterDescriptionForm from "./_components/chapter-description-form";
+import ChapterAccessForm from "./_components/chapter-access-form copy";
 
 async function ChapterIdPage({
   params,
@@ -79,6 +80,21 @@ async function ChapterIdPage({
             courseId={params.courseId}
             chapterId={params.chapterId}
           />
+        </div>
+        <div className="mt-3">
+          <div className="flex items-center gap-x-2">
+            <div className="bg-sky-100 p-1 border rounded-full border-sky-500">
+              <EyeIcon />
+            </div>
+            Access Settings
+          </div>
+          <div>
+            <ChapterAccessForm
+              initialData={chapter}
+              courseId={params.courseId}
+              chapterId={params.chapterId}
+            />
+          </div>
         </div>
       </div>
     </div>
