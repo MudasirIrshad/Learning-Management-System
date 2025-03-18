@@ -1,13 +1,20 @@
 import { IconBadge } from "@/components/icon-badge";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { ArrowLeft, Eye, EyeIcon, LayoutDashboard } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  EyeIcon,
+  LayoutDashboard,
+  VideoIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import ChapterTitleForm from "./_components/chapter-title-form";
 import ChapterDescriptionForm from "./_components/chapter-description-form";
 import ChapterAccessForm from "./_components/chapter-access-form copy";
+import ChapterVideoForm from "./_components/chapter-video-form";
 
 async function ChapterIdPage({
   params,
@@ -84,15 +91,30 @@ async function ChapterIdPage({
         <div className="mt-3">
           <div className="flex items-center gap-x-2">
             <div className="bg-sky-100 p-1 border rounded-full border-sky-500">
-              <EyeIcon />
+              <EyeIcon className="text-sky-600" />
             </div>
-            Access Settings
+            <h2 className="text-xl">Access Settings</h2>
           </div>
           <div>
             <ChapterAccessForm
               initialData={chapter}
               courseId={params.courseId}
               chapterId={params.chapterId}
+            />
+          </div>
+        </div>
+        <div>
+          <div className="flex items-center gap-x-2">
+            <div className="bg-sky-100 p-1 border rounded-full border-sky-500">
+              <VideoIcon className="text-sky-600" />
+            </div>
+            <h2 className="text-xl">Add a video</h2>
+          </div>
+          <div>
+            <ChapterVideoForm
+              initialData={chapter}
+              chapterId={params.chapterId}
+              courseId={params.courseId}
             />
           </div>
         </div>
