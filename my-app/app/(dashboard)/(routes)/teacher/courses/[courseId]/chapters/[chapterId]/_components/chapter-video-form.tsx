@@ -77,9 +77,11 @@ function ChapterVideoForm({
           <FileUpload
             endpoint="chapterVideo"
             onChange={(url) => {
-              if (url) {
-                onSubmit({ videoUrl: url });
+              if (!url) {
+                toast.error("File upload failed");
+                return;
               }
+              onSubmit({ videoUrl: url });
             }}
           />
           <div className="text-xs text-muted-foreground mt-4">
