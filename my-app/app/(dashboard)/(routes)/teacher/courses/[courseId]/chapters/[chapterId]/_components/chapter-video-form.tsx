@@ -74,7 +74,6 @@ function ChapterVideoForm({
               <MuxPlayer playbackId={initialData?.muxData?.playbackId || ""} />
             </div>
           </>
-          
         ))}
       {isEditing && (
         <div>
