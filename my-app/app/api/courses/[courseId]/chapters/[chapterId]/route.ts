@@ -14,6 +14,73 @@ if (!muxTokenId || !muxTokenSecret) {
 // Initialize Mux
 const { video } = new Mux({ tokenId: muxTokenId, tokenSecret: muxTokenSecret });
 
+export async function DELETE(
+  req: Request,
+  { params }: { params: { courseId: string; chapterId: string } }
+) {
+  try {
+    const { userId } = await auth();
+    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+
+    const courseOwner = await prisma.course.findUnique({
+      where: {
+        id: params.courseId,
+        userId: userId,
+      },
+    });
+    if (!courseOwner) return new NextResponse("Unauthorized", { status: 401 });
+
+    const chapter = await prisma.chapter.findUnique({
+      where: {
+        id: params.chapterId,
+        courseId: params.courseId,
+      },
+    });
+    if (!chapter) {
+      return new NextResponse("Not Found", { status: 404 });
+    }
+
+    if (chapter.videoUrl) {
+      const existingMuxData = await prisma.muxData.findFirst({
+        where: { chapterId: params.chapterId },
+      });
+
+      if (existingMuxData) {
+        // await video.assets.delete(existingMuxData.assetId);
+        await prisma.muxData.delete({ where: { id: existingMuxData.id } });
+      }
+    }
+
+    const deletedChapter = await prisma.chapter.delete({
+      where: {
+        id: params.chapterId,
+      },
+    });
+
+    const publishedChaptersInCourse = await prisma.chapter.findMany({
+      where: {
+        courseId: params.courseId,
+        isPublished: true,
+      },
+    });
+
+    if (!publishedChaptersInCourse.length) {
+      await prisma.course.update({
+        where: {
+          id: params.courseId,
+        },
+        data: {
+          isPublished: false,
+        },
+      });
+    }
+    return NextResponse.json(deletedChapter);
+  } catch (error) {
+    console.error("CHAPTERID DELETE ERROR:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
+
 export async function PATCH(
   req: Request,
   { params }: { params: { courseId: string; chapterId: string } }
@@ -37,7 +104,6 @@ export async function PATCH(
 
     const { isPublished, ...values } = parsedBody;
 
-    console.log("VIDEO URL", values.videoUrl);
     const courseOwner = await prisma.course.findUnique({
       where: {
         id: params.courseId,
@@ -87,8 +153,6 @@ export async function PATCH(
             playbackId: asset.playback_ids?.[0]?.id ?? null, // FIX: Avoid undefined issues
           },
         });
-
-        console.log("Mux Video Upload Success:", asset);
       } catch (muxError) {
         console.error("MUX VIDEO UPLOAD ERROR:", muxError);
         return new NextResponse("Mux upload failed", { status: 500 });
