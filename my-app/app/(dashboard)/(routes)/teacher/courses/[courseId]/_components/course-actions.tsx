@@ -26,7 +26,7 @@ function CourseActions({
       await axios.delete(`/api/courses/${courseId}`);
 
       toast.success("Course Deleted");
-      router.push(`/teacher/courses/${courseId}`);
+      router.push(`/teacher/courses`);
       router.refresh();
     } catch (error) {
       toast.error("Something went wrong");
