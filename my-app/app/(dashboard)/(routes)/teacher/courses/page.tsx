@@ -21,9 +21,6 @@ async function CoursesPage() {
   });
   return (
     <div className="p-6">
-      <Link href={"/teacher/createcourse"}>
-        <Button>Add Course</Button>
-      </Link>
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={courses} />
       </div>
