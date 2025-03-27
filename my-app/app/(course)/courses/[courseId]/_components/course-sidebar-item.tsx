@@ -1,15 +1,9 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { CheckCircle, Lock, PlayCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
-
-// key={chapter.id}
-//             id={chapter.id}
-//             label={chapter.title}
-//             isCompleted={!!chapter.userProgress?.[0]?.isCompleted}
-//             courseId={course.id}
-//             isLocked
+import React, { useMemo } from "react";
 
 interface CourseSidebarItemProps {
   id: string;
@@ -18,6 +12,7 @@ interface CourseSidebarItemProps {
   courseId: string;
   isLocked: boolean;
 }
+
 function CourseSidebarItem({
   id,
   label,
@@ -28,36 +23,44 @@ function CourseSidebarItem({
   const pathname = usePathname();
   const router = useRouter();
 
-  const Icon = isLocked ? Lock : isCompleted ? CheckCircle : PlayCircle;
+  // Determine the icon based on conditions
+  const Icon = useMemo(
+    () => (isLocked ? Lock : isCompleted ? CheckCircle : PlayCircle),
+    [isLocked, isCompleted]
+  );
 
+  // Check if the current chapter is active
   const isActive = pathname?.includes(id);
 
-  const onClick = () => {
+  // Handle navigation
+  const handleClick = () => {
     router.push(`/courses/${courseId}/chapters/${id}`);
   };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       type="button"
       className={cn(
-        "flex items-center gap-x-2 text-slate-500 text-sm font-[500] pl-6 transition-all hover:text-slate-600 hover:bg-slate-300/20",
-        isActive &&
-          "text-slate-700 bg-slate-200/20 hover:bg-slate-200/20 hover:text-slate-700",
+        "relative flex items-center gap-x-2 text-sm font-medium pl-6 py-4 transition-all",
+        "text-slate-500 hover:text-slate-600 hover:bg-slate-300/20",
+        isActive && "text-slate-700 bg-slate-200/20",
         isCompleted && "text-emerald-700 hover:text-emerald-700",
         isCompleted && isActive && "bg-emerald-200/20"
       )}
     >
-      <div className="flex items-center gap-x-2 py-4">
-        <Icon
-          size={22}
-          className={cn(
-            "text-slate-500",
-            isActive && "text-slate-700",
-            isCompleted && "text-emerald-700"
-          )}
-        />
-        {label}
-      </div>
+      <Icon
+        size={22}
+        className={cn(
+          "transition-colors",
+          isActive ? "text-slate-700" : "text-slate-500",
+          isCompleted && "text-emerald-700"
+        )}
+      />
+      <span>{label}</span>
+      {isActive && (
+        <div className="ml-auto absolute inset-y-0 right-0 w-1 bg-sky-700 transition-opacity opacity-100" />
+      )}
     </button>
   );
 }
