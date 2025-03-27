@@ -20,8 +20,6 @@ export const getCourses = async ({
   categoryId,
 }: GetCourses): Promise<CourseWithProgressWithCategory[]> => {
   try {
-    console.log("Fetching courses with:", { title, categoryId });
-
     const whereClause: any = {
       isPublished: true,
     };
@@ -62,8 +60,6 @@ export const getCourses = async ({
       },
     });
 
-    console.log("Courses found:", courses.length); // Debugging output
-
     // If no courses are found, return an empty array
     if (courses.length === 0) {
       return [];
@@ -86,8 +82,6 @@ export const getCourses = async ({
           };
         })
       );
-    console.log("Fetching courses with:", { title, categoryId });
-    console.log("Courses found:", courses.length);
 
     return coursesWithProgress;
   } catch (error) {
