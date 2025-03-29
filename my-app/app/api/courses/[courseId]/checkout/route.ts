@@ -12,7 +12,6 @@ export async function POST(
     params: { courseId: string };
   }
 ) {
-  console.log("HERE IT CAME");
   try {
     const user = await currentUser();
 
@@ -27,6 +26,10 @@ export async function POST(
       },
     });
 
+    if (!course) {
+      return new NextResponse("Not Found", { status: 404 });
+    }
+
     const purchase = await prisma.purchase.findUnique({
       where: {
         userId_courseId: {
@@ -36,10 +39,7 @@ export async function POST(
       },
     });
 
-    if (!purchase)
-      return new NextResponse("Already Purchased", { status: 400 });
-
-    if (!course) return new NextResponse("Not Found", { status: 404 });
+    if (purchase) return new NextResponse("Already Purchased", { status: 400 });
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
       {
@@ -48,14 +48,14 @@ export async function POST(
           currency: "PKR",
           product_data: {
             name: course.title,
-            description: course.description!,
+            description: course.description || "No description available",
           },
           unit_amount: Math.round(course.price! * 100),
         },
       },
     ];
 
-    let stripeCusotmer = await prisma.stripeCustomer.findUnique({
+    let stripeCustomer = await prisma.stripeCustomer.findUnique({
       where: {
         userId: user.id,
       },
@@ -64,11 +64,11 @@ export async function POST(
       },
     });
 
-    if (!stripeCusotmer) {
+    if (!stripeCustomer) {
       const customer = await stripe.customers.create({
         email: user.emailAddresses[0].emailAddress,
       });
-      stripeCusotmer = await prisma.stripeCustomer.create({
+      stripeCustomer = await prisma.stripeCustomer.create({
         data: {
           userId: user.id,
           stripeCustomerId: customer.id,
@@ -77,7 +77,7 @@ export async function POST(
     }
 
     const session = await stripe.checkout.sessions.create({
-      customer: stripeCusotmer.stripeCustomerId,
+      customer: stripeCustomer.stripeCustomerId,
       line_items,
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}?success=1`,
@@ -90,7 +90,7 @@ export async function POST(
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    console.log("[COURSE ID CHECKOU]", error);
+    console.log("[COURSE ID CHECKOUT]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
