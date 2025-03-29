@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { stripe } from "@/lib/stripe";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -11,6 +12,7 @@ export async function POST(
     params: { courseId: string };
   }
 ) {
+  console.log("HERE IT CAME");
   try {
     const user = await currentUser();
 
@@ -52,6 +54,41 @@ export async function POST(
         },
       },
     ];
+
+    let stripeCusotmer = await prisma.stripeCustomer.findUnique({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        stripeCustomerId: true,
+      },
+    });
+
+    if (!stripeCusotmer) {
+      const customer = await stripe.customers.create({
+        email: user.emailAddresses[0].emailAddress,
+      });
+      stripeCusotmer = await prisma.stripeCustomer.create({
+        data: {
+          userId: user.id,
+          stripeCustomerId: customer.id,
+        },
+      });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      customer: stripeCusotmer.stripeCustomerId,
+      line_items,
+      mode: "payment",
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}?success=1`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}?canceled=1`,
+      metadata: {
+        courseId: course.id,
+        userId: user.id,
+      },
+    });
+
+    return NextResponse.json({ url: session.url });
   } catch (error) {
     console.log("[COURSE ID CHECKOU]", error);
     return new NextResponse("Internal Error", { status: 500 });
