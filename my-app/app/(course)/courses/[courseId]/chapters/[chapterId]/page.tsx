@@ -6,6 +6,7 @@ import VideoPlayer from "./_components/course-videoplayer";
 import CourseEnrollButton from "./_components/course-enroll-button";
 import { Separator } from "@/components/ui/separator";
 import { Preview } from "@/components/preview";
+import CourseProgressButton from "./_components/course-progress-button";
 
 const ChapterIdPage = async ({
   params,
@@ -64,7 +65,9 @@ const ChapterIdPage = async ({
         <div className="p-4 flex flex-col md:flex-row items-center justify-between">
           <h2 className="text-2xl font-semibold mb-2">{chapter.title}</h2>
           {purchase ? (
-            <></>
+            <>
+              <CourseProgressButton />
+            </>
           ) : (
             <div>
               <CourseEnrollButton

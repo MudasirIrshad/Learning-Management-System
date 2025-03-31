@@ -34,7 +34,11 @@ async function CourseSidebar({ course, progressCount }: CourseSidebarProps) {
         <h1 className="font-semibold">{course.title}</h1>
         {purchase && (
           <div>
-            <CourseProgress variant="success" value={progressCount} />
+            <CourseProgress
+              variant="success"
+              value={progressCount}
+              size="default"
+            />
           </div>
         )}
       </div>

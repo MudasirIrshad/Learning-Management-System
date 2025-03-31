@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { IconBadge } from "./icon-badge";
 import { BookOpen } from "lucide-react";
+import CourseProgress from "./course-progress";
 
 interface CourseCardProps {
   id: string;
@@ -46,7 +47,13 @@ function CourseCard({
               </span>
             </div>
             {progress !== null ? (
-              <div>Todo progress component.</div>
+              <div>
+                <CourseProgress
+                  value={progress}
+                  size="sm"
+                  variant={progress === 100 ? "success" : "default"}
+                />
+              </div>
             ) : (
               <div>Rs. {price}</div>
             )}
