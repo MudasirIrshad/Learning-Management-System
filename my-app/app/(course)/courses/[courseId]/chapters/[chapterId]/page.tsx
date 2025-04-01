@@ -102,7 +102,7 @@ const ChapterIdPage = async ({
               {attachements.map((attachement) => (
                 <div>
                   <a
-                    href={attachement.id}
+                    href={attachement.url}
                     target="_blank"
                     key={attachement.id}
                     className="flex items-center p-3 w-full bg-sky-200 border text-sky-700 rounded-md hover:underline"
