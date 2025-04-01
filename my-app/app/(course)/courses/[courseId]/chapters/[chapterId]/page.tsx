@@ -2,7 +2,7 @@ import { getChapter } from "@/actions/get-chapters";
 import Banner from "@/components/banner";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import VideoPlayer from "./_components/course-videoplayer";
+import VideoPlayer from "./_components/videoplayer";
 import CourseEnrollButton from "./_components/course-enroll-button";
 import { Separator } from "@/components/ui/separator";
 import { Preview } from "@/components/preview";
