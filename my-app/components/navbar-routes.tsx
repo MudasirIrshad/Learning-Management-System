@@ -1,6 +1,6 @@
 "use client";
 import { useAuth, UserButton } from "@clerk/nextjs";
-import { Divide, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Button } from "./ui/button";
@@ -11,7 +11,7 @@ import { isTeacher } from "@/lib/teacher";
 export default function NavbarRoutes() {
   const { userId } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
+
   const isTeacherPage = pathname?.startsWith("/teacher");
   const isCoursePage = pathname?.includes("/courses");
   const isSearchPage = pathname === "/search";
