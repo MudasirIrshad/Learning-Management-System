@@ -7,6 +7,9 @@ import CourseEnrollButton from "./_components/course-enroll-button";
 import { Separator } from "@/components/ui/separator";
 import { Preview } from "@/components/preview";
 import CourseProgressButton from "./_components/course-progress-button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const ChapterIdPage = async ({
   params,
@@ -50,6 +53,12 @@ const ChapterIdPage = async ({
           variant={"warning"}
         />
       )}
+      <Link href={"/search"}>
+        <Button size={"sm"} variant={"ghost"} className="mt-2 ml-2">
+          <ArrowLeft className="h-4 w-4 " />
+          Back
+        </Button>
+      </Link>
       <div className="flex flex-col max-w-4xl mx-auto pb-20">
         <div className="p-4">
           <VideoPlayer
