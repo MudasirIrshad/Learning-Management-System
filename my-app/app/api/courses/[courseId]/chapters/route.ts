@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { isTeacher } from "@/lib/teacher";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -10,7 +11,8 @@ export async function POST(
     const { userId } = await auth();
     const { title } = await req.json();
 
-    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
+    if (!userId || !isTeacher(userId))
+      return new NextResponse("Unauthorized", { status: 401 });
     const courseOwner = await prisma.course.findUnique({
       where: {
         id: params.courseId,
